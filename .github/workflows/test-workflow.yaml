@@ -9,3 +9,7 @@ jobs:
     steps:
       - name: First step 
         run: echo "This is first step"
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: print dirs
+        run: ls -l
