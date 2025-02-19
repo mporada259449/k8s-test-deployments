@@ -1,0 +1,30 @@
+name: 'YOLO container image building'
+
+on:
+  push:
+    branches:
+      - master
+      - dev/model
+    paths:
+    - 'model/**'
+    - '.github/**'
+  workflow_dispatch:
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps: 
+      - run: "bash scripts/test-docker-build.sh"
+  
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - run: docker build -t yolo model/
+
+
+##można dodać if jeśli nie będzie commit nie będzie miał taga
