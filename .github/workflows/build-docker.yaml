@@ -18,12 +18,19 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps: 
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+
       - run: "bash scripts/test-docker-build.sh"
   
   build:
     needs: test
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       - run: docker build -t yolo model/
 
 
