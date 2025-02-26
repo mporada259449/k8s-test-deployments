@@ -1,7 +1,7 @@
 #!/bin/bash
 
 container_name=yolo
-docker build -t $container_name model/
+docker build -t $container_name --build-arg model/
 docker run --rm -d $container_name
 exit_code=$?
 if [ $exit_code ]; then

@@ -1,6 +1,6 @@
 FROM python:3.12
 ARG YOLO_FILE
-ENV YOLOVERSION=${YOLOFILE}
+ENV YOLOVERSION=${YOLO_FILE}
 
 RUN mkdir /app
 COPY main.py requirements.txt /app/

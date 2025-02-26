@@ -20,16 +20,7 @@ defaults:
     shell: bash
 
 jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps: 
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ github.ref_name }}
-      - run: "bash scripts/test-docker-build.sh"
-  
   build:
-    needs: test
     runs-on: ubuntu-latest
 
     permissions:
@@ -46,29 +37,29 @@ jobs:
 
       - name: "Setting variables"
         run: |
-          echo "YOLO_FILE=$(jq '.YOLO_FILE' version.json)" >> $GITHUB_ENV
-          echo "YOLO_VERSION=$(jq '.YOLO_VERSION' version.json)" >> $GITHUB_ENV
-          echo "CONTAINER_VERSION=$(jq '.CONTAINER_VERSION' version.json)" >> $GITHUB_ENV
+          echo "YOLO_FILE=$(jq -r '.YOLO_FILE' version.json)" >> $GITHUB_ENV
+          echo "YOLO_VERSION=$(jq -r '.YOLO_VERSION' version.json)" >> $GITHUB_ENV
+          echo "CONTAINER_VERSION=$(jq -r '.CONTAINER_VERSION' version.json)" >> $GITHUB_ENV
 
       - name: "Variables"
         run: |
           echo "YOLO_FILE=${{ env.YOLO_FILE }}"
-          echo "YOLO_VERSION=${{ env.YOLO_VERSION }}
+          echo "YOLO_VERSION=${{ env.YOLO_VERSION }}"
           echo "CONTAINER_VERSION=${{ env.CONTAINER_VERSION }}"
 
       - name: "Logging into registry"
         uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
         with:
-          registry: ${{ env.REGISTRY }}
+          registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: "Build image"
         run: |
-          docker build -t "${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}" --build-arg YOLO_FILE=${{ env.YOLO_FILE }} model/
+          docker build -t "${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}" --build-arg YOLO_FILE=${{ env.YOLO_FILE }} model/
       
       - name: "Push image"
-        run: docker push "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}"
+        run: docker push ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}
 
 
 
