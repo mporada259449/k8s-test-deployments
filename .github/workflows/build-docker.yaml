@@ -11,6 +11,10 @@ on:
     - 'scripts/**'
   workflow_dispatch:
 
+env:
+  DOCKER_REGISTRY: ghcr.io
+  IMAGE_NAME: yolo-model
+
 defaults:
   run:
     shell: bash
@@ -22,17 +26,49 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-
       - run: "bash scripts/test-docker-build.sh"
   
   build:
     needs: test
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+      attestations: write
+      id-token: write
+
     steps:
-      - uses: actions/checkout@v4
+      - name: "Cloning repo"
+        uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
-      - run: docker build -t yolo model/
+
+      - name: "Setting variables"
+        run: |
+          echo "YOLO_FILE=$(jq '.YOLO_FILE' version.json)" >> $GITHUB_ENV
+          echo "YOLO_VERSION=$(jq '.YOLO_VERSION' version.json)" >> $GITHUB_ENV
+          echo "CONTAINER_VERSION=$(jq '.CONTAINER_VERSION' version.json)" >> $GITHUB_ENV
+
+      - name: "Variables"
+        run: |
+          echo "YOLO_FILE=${{ env.YOLO_FILE }}"
+          echo "YOLO_VERSION=${{ env.YOLO_VERSION }}
+          echo "CONTAINER_VERSION=${{ env.CONTAINER_VERSION }}"
+
+      - name: "Logging into registry"
+        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Build image"
+        run: |
+          docker build -t "${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}" --build-arg YOLO_FILE=${{ env.YOLO_FILE }} model/
+      
+      - name: "Push image"
+        run: docker push "${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}"
 
 
-##można dodać if jeśli nie będzie commit nie będzie miał taga
+

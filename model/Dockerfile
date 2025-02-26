@@ -1,5 +1,5 @@
 FROM python:3.12
-ARG YOLOFILE=yolov3u.pt
+ARG YOLO_FILE
 ENV YOLOVERSION=${YOLOFILE}
 
 RUN mkdir /app
