@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-      - dev/model
+      - yolo-v*
     paths:
     - 'model/**'
     - '.github/**'
@@ -59,7 +59,8 @@ jobs:
           docker build -t "${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}" --build-arg YOLO_FILE=${{ env.YOLO_FILE }} model/
       
       - name: "Push image"
-        run: docker push ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}
+        run: |
+          docker push ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}
 
 
 
