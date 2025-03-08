@@ -22,9 +22,9 @@ jobs:
 
       - name: "Prepare environments"
         run: |
-          export YOLO_FILE=$(jq -r '.YOLO_FILE' version.json)
-          export YOLO_VERSION=$(jq -r '.YOLO_VERSION' version.json)
-          export CONTAINER_VERSION=$(jq -r '.CONTAINER_VERSION' version.json)
+          echo "YOLO_FILE=$(jq -r '.YOLO_FILE' version.json)" >> $GITHUB_ENV
+          echo "YOLO_VERSION=$(jq -r '.YOLO_VERSION' version.json)" >> $GITHUB_ENV
+          echo "CONTAINER_VERSION=$(jq -r '.CONTAINER_VERSION' version.json)" >> $GITHUB_ENV
       
       - name: "Run test build"
         run: bash scripts/test-docker-build.sh
