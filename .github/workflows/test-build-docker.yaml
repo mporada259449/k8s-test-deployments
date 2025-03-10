@@ -1,0 +1,38 @@
+name: 'YOLO container image building - test version tag'
+
+on:
+  push:
+    branches:
+      - 'dev/new-image-release'
+    paths:
+    - 'model/**'
+    - '.github/**'
+  workflow_dispatch:
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: "Clone Repo"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+      
+      - name: "Setting variables"
+        run: |
+          echo "YOLO_FILE=$(jq -r '.YOLO_FILE' version.json)" >> $GITHUB_ENV
+          echo "YOLO_VERSION=$(jq -r '.YOLO_VERSION' version.json)" >> $GITHUB_ENV
+          echo "CONTAINER_VERSION=$(jq -r '.CONTAINER_VERSION' version.json)" >> $GITHUB_ENV
+      
+      - name: Tag commit
+        run: |
+          git config --global user.name ${{ github.repository_owner }}
+          git config --global user.email 259449@student.pwr.edu.pl
+          tag_name="test-2"
+          git tag -a $tag_name -m "new image for version $tag_name" ${{ github.sha }}
+          git remote -v
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com//${{ github.repository }} $tag_name
