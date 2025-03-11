@@ -74,10 +74,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: read
-      packages: write
-      attestations: write
-      id-token: write
+      contents: write
 
     steps:
       - name: "Clone Repo"
@@ -93,8 +90,8 @@ jobs:
       
       - name: Tag commit
         run: |
-          git config --global user.name tag-bot
+          git config --global user.name ${{ github.repository_owner }}
           git config --global user.email 259449@student.pwr.edu.pl
-          
-          git tag -a "${{ env.YOLO_VERSION }}.${{ env.CONTAINER_VERSION }}" -m "new image for version ${{ env.YOLO_VERSION }}.${{ env.CONTAINER_VERSION }}"
-          git push "${{ env.YOLO_VERSION }}.${{ env.CONTAINER_VERSION }}"
+          tag_name="${{ env.YOLO_VERSION }}.${{ env.CONTAINER_VERSION }}"
+          git tag -a $tag_name -m "new image for version $tag_name" ${{ github.sha }}
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com//${{ github.repository }} $tag_name
