@@ -18,14 +18,15 @@ jobs:
     steps:
       - name: "Clone repository"
         uses: actions/checkout@v4
-
+        with:
+          fetch-depth: 2
       - name: "Check if version.json has been modified"
         run: |
           git log --oneline
           git diff --name-only
-          changed=$(git diff --name-only)
-
-          if grep -q "model/" <<< "${changed-files}" && ! grep -q "version.json" <<< "${changed-files}"; then
+          changed=$(git diff --name-only HEAD^)
+          echo $changed
+          if grep -q "model/" <<< "${changed}" && ! grep -q "version.json" <<< "${changed}"; then
               echo "Model was changed but its version wasn't bumped"
               echo "Please changed CONTAINER_VERSION in version.json"
               exit 1
