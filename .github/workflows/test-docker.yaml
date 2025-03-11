@@ -3,7 +3,8 @@ name: "Test docker image building on pull request"
 on:
   pull_request:
     branches:
-      - master
+      - 'master'
+      - 'yolo-v**'
     paths:
       - 'version.json'
       - 'model/**'
@@ -12,33 +13,39 @@ on:
 
 
 jobs:
+  check-new-version-file:
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Clone repository"
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: "Check if version.json has been modified"
+        run: |
+          git log --oneline
+          git diff --name-only
+          changed=$(git diff --name-only HEAD^)
+          echo $changed
+          if grep -q "model/" <<< "${changed}" && ! grep -q "version.json" <<< "${changed}"; then
+              echo "Model was changed but its version wasn't bumped"
+              echo "Please changed CONTAINER_VERSION in version.json"
+              exit 1
+          fi
+
   run-test-script:
     runs-on: ubuntu-latest
+    needs: check-new-version-file
     steps:
       - name: "Clone repo"
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.ref_name }}
+          ref: ${{ github.head_ref }}
 
       - name: "Prepare environments"
         run: |
-          export YOLO_FILE=$(jq -r '.YOLO_FILE' version.json)
-          export YOLO_VERSION=$(jq -r '.YOLO_VERSION' version.json)
-          export CONTAINER_VERSION=$(jq -r '.CONTAINER_VERSION' version.json)
+          echo "YOLO_FILE=$(jq -r '.YOLO_FILE' version.json)" >> $GITHUB_ENV
+          echo "YOLO_VERSION=$(jq -r '.YOLO_VERSION' version.json)" >> $GITHUB_ENV
+          echo "CONTAINER_VERSION=$(jq -r '.CONTAINER_VERSION' version.json)" >> $GITHUB_ENV
       
       - name: "Run test build"
         run: bash scripts/test-docker-build.sh
-    
-  check-new-version-file:
-    runs-on: ubuntu-latest
-    if: contains(github.event.head_commit.modified, 'model')
-    steps:
-      - name: "Check if version.json has been modified"
-        run: |
-          echo "To be done"
-
-      
-
-
-
-
