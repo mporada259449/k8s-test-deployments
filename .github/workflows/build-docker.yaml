@@ -3,12 +3,10 @@ name: 'YOLO container image building'
 on:
   push:
     branches:
-      - master
-      - yolo-v*
+      - 'yolo-v**'
     paths:
     - 'model/**'
     - '.github/**'
-    - 'scripts/**'
   workflow_dispatch:
 
 env:
@@ -30,7 +28,7 @@ jobs:
       id-token: write
 
     steps:
-      - name: "Cloning repo"
+      - name: "Cloning repository"
         uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
@@ -48,19 +46,52 @@ jobs:
           echo "CONTAINER_VERSION=${{ env.CONTAINER_VERSION }}"
 
       - name: "Logging into registry"
-        uses: docker/login-action@65b78e6e13532edd9afa3aa52ac7964289d1a9c1
+        uses: docker/login-action@v3
         with:
           registry: ${{ env.DOCKER_REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+        
+      - name: "Set image name"
+        id: metadata
+        uses: docker/metadata-action@v5
+        with: 
+          images: |
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/yolo/yolo-${{ env.YOLO_VERSION }}
 
-      - name: "Build image"
-        run: |
-          docker build -t "${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}" --build-arg YOLO_FILE=${{ env.YOLO_FILE }} model/
+      - name: "Build and push docker image"
+        id: build
+        uses: docker/build-push-action@v6
+        with:
+          context: model/
+          tags: |
+            ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/yolo/yolo-${{ env.YOLO_VERSION }}:${{ env.CONTAINER_VERSION }}
+          build-args: |
+            YOLO_FILE=${{ env.YOLO_FILE }}
+          push: true
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: build
+    permissions:
+      contents: write
+
+    steps:
+      - name: "Clone Repo"
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
       
-      - name: "Push image"
+      - name: "Setting variables"
         run: |
-          docker push ${{ env.DOCKER_REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}:${{ env.YOLO_VERSION }}-${{ env.CONTAINER_VERSION }}
-
-
-
+          echo "YOLO_FILE=$(jq -r '.YOLO_FILE' version.json)" >> $GITHUB_ENV
+          echo "YOLO_VERSION=$(jq -r '.YOLO_VERSION' version.json)" >> $GITHUB_ENV
+          echo "CONTAINER_VERSION=$(jq -r '.CONTAINER_VERSION' version.json)" >> $GITHUB_ENV
+      
+      - name: Tag commit
+        run: |
+          git config --global user.name ${{ github.repository_owner }}
+          git config --global user.email 259449@student.pwr.edu.pl
+          tag_name="${{ env.YOLO_VERSION }}.${{ env.CONTAINER_VERSION }}"
+          git tag -a $tag_name -m "new image for version $tag_name" ${{ github.sha }}
+          git push https://${{ secrets.GITHUB_TOKEN }}@github.com//${{ github.repository }} $tag_name
