@@ -9,6 +9,7 @@ on:
       - 'version.json'
       - 'model/**'
       - '.github/workflows/test-docker.yaml'
+      - 'scripts/test-docker-build.sh'
   workflow_dispatch:
 
 
