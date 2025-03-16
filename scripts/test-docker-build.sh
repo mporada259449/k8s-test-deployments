@@ -4,7 +4,7 @@ container_name=yolo
 docker build -t $container_name --build-arg YOLO_FILE=${YOLO_FILE} model/
 docker run --rm -d $container_name
 exit_code=$?
-if [ $exit_code ]; then
+if [ $exit_code -eq 0 ]; then
     echo "Container run successfully"
 else
     echo "Container startup faild with code $exit_code"

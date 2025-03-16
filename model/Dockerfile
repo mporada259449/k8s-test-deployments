@@ -21,11 +21,12 @@ ENV YOLOVERSION=${YOLO_FILE}
 ENV CLASS_FILE='classes.json'
 
 RUN mkdir /app
+RUN apt update && apt install ffmpeg libsm6 libxext6 -y
 COPY --from=export-model /exportdir/${YOLO_FILE}.onnx /exportdir/${CLASS_FILE} /app/
-COPY main.py req.txt /app/
+COPY main.py requirements.txt /app/
 
 
 WORKDIR /app
-RUN pip3 install --no-cache-dir -r req.txt
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 CMD [ "fastapi", "run", "main.py", "--host", "0.0.0.0", "--port", "5000" ]
