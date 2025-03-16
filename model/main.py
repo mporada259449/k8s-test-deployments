@@ -67,8 +67,7 @@ def forward(image):
     return JSONResponse(content=json_response)
 
 
-def prepocessing_image(file: UploadFile):
-    img = cv2.imread('test/test.png')
+def prepocessing_image(img):
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
     img_resize = cv2.resize(img_rgb, (IMAGE_WIDTH, IMAGE_HIGHT))
     img_norm = img_resize.astype(np.float32)/255.0
