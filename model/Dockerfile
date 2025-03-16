@@ -21,7 +21,6 @@ ENV YOLOVERSION=${YOLO_FILE}
 ENV CLASS_FILE='classes.json'
 
 RUN mkdir /app
-RUN apt update && apt install ffmpeg libsm6 libxext6 -y
 COPY --from=export-model /exportdir/${YOLO_FILE}.onnx /exportdir/${CLASS_FILE} /app/
 COPY main.py requirements.txt /app/
 
