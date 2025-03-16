@@ -2,3 +2,7 @@ venv/
 test/
 __pycache__/
 *.pt
+venv2/
+*.onnx
+classes.json
+.vscode/
