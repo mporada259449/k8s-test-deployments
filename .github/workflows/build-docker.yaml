@@ -6,7 +6,7 @@ on:
       - 'yolo-v**'
     paths:
     - 'model/**'
-    - '.github/**'
+    - '.github/workflows/build-docker.yaml'
   workflow_dispatch:
 
 env:
