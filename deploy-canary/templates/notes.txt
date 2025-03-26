@@ -1,0 +1,1 @@
+Należy dorobić pliki z które definują namespacey

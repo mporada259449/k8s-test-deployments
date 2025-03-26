@@ -1,0 +1,13 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: canary-gateway
+spec:
+  gatewayClassName: canary-gateway-class
+  listeners:
+  - protocol: HTTP
+    port: 5000
+    name: model-port-endpoint
+    allowedRoutes:
+      namespaces:
+        from: Same

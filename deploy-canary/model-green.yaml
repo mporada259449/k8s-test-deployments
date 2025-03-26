@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: model-api-green
+  labels:
+    app: yolo-green
+spec:
+  replicas: 1
+  selector:
+    matchLabels: 
+      app: yolo-green
+  template:
+    metadata:
+      labels:
+        app: yolo-green
+    spec:
+      containers:
+      - name: yolo-v3
+        image: ghcr.io/mporada259449/yolo/yolo-v3:1.2
+        ports:
+        - containerPort: 5000
+        resources:
+          limits:
+            cpu: 1
+            memory: '256Mi'
