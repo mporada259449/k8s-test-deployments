@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api-green
+  labels:
+    app: {{ .Values.labelGreen.app | quote }}
+spec:
+  replicas: {{ .Values.replicas.green }}
+  selector:
+    matchLabels: 
+      app: {{ .Values.labelGreen.app | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labelGreen.app | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.containerNames.green | quote }}
+        image: {{ .Values.image.green | quote }}
+        ports:
+        - containerPort: {{ .Values.targetPort.green }}
+        resources:
+          limits:
+            cpu: {{ .Values.limits.green.cpu | quote }}
+            memory: {{ .Values.limits.green.memory | quote }}

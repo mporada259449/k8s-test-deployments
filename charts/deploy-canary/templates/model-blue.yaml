@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api-blue
+  labels:
+    app: {{ .Values.labelBlue.app | quote }}
+spec:
+  replicas: {{ .Values.replicas.blue }}
+  selector:
+    matchLabels: 
+      app: {{ .Values.labelBlue.app | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labelBlue.app | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.containerNames.blue | quote }}
+        image: {{ .Values.image.blue | quote }}
+        ports:
+        - containerPort: {{ .Values.targetPort.blue }}
+        resources:
+          limits:
+            cpu: {{ .Values.limits.blue.cpu | quote }}
+            memory: {{ .Values.limits.blue.memory | quote }}
