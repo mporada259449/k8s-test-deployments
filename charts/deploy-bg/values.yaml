@@ -7,40 +7,42 @@ openPortName: model-port-endpoint
 
 #weights values for canary deployment release
 weights:
-  stable: 50
-  canary: 50
+  blue: 100
+  green: 0
 
 #Deployments labels
-labelStable: 
-  app: yolo-stable
-labelCanary: 
-  app: yolo-canary
+labelBlue: 
+  app: yolo-blue
+labelGreen: 
+  app: yolo-green
 
 #Replica values for deployments
 replicas:
-  stable: 1
-  canary: 1
+  blue: 1
+  green: 1
 
 #Container names
 containerNames:
-  stable: yolo-v3
-  canary: yolo-v3
+  blue: yolo-v3
+  green: yolo-v3
 
 #Images names
 image:
-  stable: ghcr.io/mporada259449/yolo/yolo-v3:1.2
-  canary: ghcr.io/mporada259449/yolo/yolo-v3:1.2
+  blue: ghcr.io/mporada259449/yolo/yolo-v3:1.2
+  green: ghcr.io/mporada259449/yolo/yolo-v3:1.2
 
 targetPort:
-  stable: 5000
-  canary: 5000
+  blue: 5000
+  green: 5000
+
+targetPortTest: 5001
 
 #limit resources for blue container
 limits:
-  stable:
+  blue:
     cpu: '2'
     memory: '2G'
-  canary:
+  green:
     cpu: '2'
     memory: '2G'
 

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api-canary
+  labels:
+    app: {{ .Values.labelCanary.app | quote }}
+spec:
+  replicas: {{ .Values.replicas.canary }}
+  selector:
+    matchLabels: 
+      app: {{ .Values.labelCanary.app | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labelCanary.app | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.containerNames.canary | quote }}
+        image: {{ .Values.image.canary | quote }}
+        ports:
+        - containerPort: {{ .Values.targetPort.canary }}
+        resources:
+          limits:
+            cpu: {{ .Values.limits.canary.cpu | quote }}
+            memory: {{ .Values.limits.canary.memory | quote }}

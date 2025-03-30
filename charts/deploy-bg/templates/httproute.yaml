@@ -7,9 +7,9 @@ spec:
   - name: {{ .Release.Name }}-gateway
   rules:
   - backendRefs:
-    - name: {{ .Release.Name }}-service-stable
+    - name: {{ .Release.Name }}-service-blue
       port: {{ .Values.openPort }}
-      weight: {{ .Values.weights.stable }}
-    - name: {{ .Release.Name }}-service-canary
+      weight: {{ .Values.weights.blue }}
+    - name: {{ .Release.Name }}-service-green
       port: {{ .Values.openPort }}
-      weight: {{ .Values.weights.canary }}
+      weight: {{ .Values.weights.green }}
