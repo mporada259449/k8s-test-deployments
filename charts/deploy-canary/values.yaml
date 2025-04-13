@@ -1,5 +1,6 @@
 #The name of the controller for GatewayClass object definition
-controllerNameGatewayClass: gateway.envoyproxy.io/gatewayclass-controller
+controllerNameGatewayClass: application-networking.k8s.aws/gateway-api-controller
+gatewayName: deploy-gateway
 
 #Port on which Gateway Api listen to and also open port of services
 openPort: 5000

@@ -4,7 +4,7 @@ metadata:
   name: {{ .Release.Name }}-route
 spec:
   parentRefs:
-  - name: {{ .Release.Name }}-gateway
+  - name: {{ .Values.gatewayName }}
   rules:
   - backendRefs:
     - name: {{ .Release.Name }}-service-stable
