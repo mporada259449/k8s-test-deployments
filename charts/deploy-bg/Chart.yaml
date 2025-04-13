@@ -1,0 +1,10 @@
+apiVersion: v2
+name: deploy-canary
+description: | 
+  A Helm chart for Kubernetes canary deployment of YOLO model
+  Model versions:
+  blue: v3.1.2
+  green: v3.1.2
+type: application
+version: 0.1.0
+appVersion: "v1.0.0"

@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-api-stable
+  labels:
+    app: {{ .Values.labelStable.app | quote }}
+spec:
+  replicas: {{ .Values.replicas.stable }}
+  selector:
+    matchLabels: 
+      app: {{ .Values.labelStable.app | quote }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.labelStable.app | quote }}
+    spec:
+      containers:
+      - name: {{ .Values.containerNames.stable | quote }}
+        image: {{ .Values.image.stable | quote }}
+        ports:
+        - containerPort: {{ .Values.targetPort.stable }}
+        resources:
+          limits:
+            cpu: {{ .Values.limits.stable.cpu | quote }}
+            memory: {{ .Values.limits.stable.memory | quote }}

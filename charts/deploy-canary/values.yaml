@@ -1,0 +1,47 @@
+#The name of the controller for GatewayClass object definition
+controllerNameGatewayClass: application-networking.k8s.aws/gateway-api-controller
+gatewayName: deploy-gateway
+
+#Port on which Gateway Api listen to and also open port of services
+openPort: 5000
+openPortName: model-port-endpoint
+
+#weights values for canary deployment release
+weights:
+  stable: 50
+  canary: 50
+
+#Deployments labels
+labelStable: 
+  app: yolo-stable
+labelCanary: 
+  app: yolo-canary
+
+#Replica values for deployments
+replicas:
+  stable: 1
+  canary: 1
+
+#Container names
+containerNames:
+  stable: yolo-v3
+  canary: yolo-v3
+
+#Images names
+image:
+  stable: ghcr.io/mporada259449/yolo/yolo-v3:1.2
+  canary: ghcr.io/mporada259449/yolo/yolo-v3:1.2
+
+targetPort:
+  stable: 5000
+  canary: 5000
+
+#limit resources for blue container
+limits:
+  stable:
+    cpu: '2'
+    memory: '2G'
+  canary:
+    cpu: '2'
+    memory: '2G'
+
