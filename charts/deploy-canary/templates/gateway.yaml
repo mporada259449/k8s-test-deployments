@@ -3,7 +3,7 @@ kind: Gateway
 metadata:
   name: {{ .Values.gatewayName }}
 spec:
-  gatewayClassName: {{ .Release.Name }}-gateway-class
+  gatewayClassName: {{ .Values.gatewayClassName }}
   listeners:
   - protocol: HTTP
     port: {{ .Values.openPort }}
