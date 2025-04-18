@@ -33,6 +33,6 @@ done
 echo "Password change in for user admin"   
 ARGO_INIT_PASS=$(argocd admin initial-password -n admin | head -n 1)
 
-argocd login --username admin --password "${ARGO_INIT_PASS}"
+argocd login --username admin --password "${ARGO_INIT_PASS}" "$ARGO_DNS_ADDRESS"
 
 argocd account update-password --current-password "${ARGO_INIT_PASS}" --new-password "${ARGO_PASS}
