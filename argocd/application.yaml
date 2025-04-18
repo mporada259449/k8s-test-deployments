@@ -1,0 +1,17 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: yolo-deploy-canary
+  namespace: argocd
+  labels:
+    chart: deploy-canary
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/mporada259449/k8s-test-deployments
+    targetRevision: HEAD
+    path: charts/deploy-canary
+
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: default

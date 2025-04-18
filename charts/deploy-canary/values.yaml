@@ -9,8 +9,8 @@ openPortName: model-port-endpoint
 
 #weights values for canary deployment release
 weights:
-  stable: 50
-  canary: 50
+  stable: 100
+  canary: 0
 
 #Deployments labels
 labelStable: 
