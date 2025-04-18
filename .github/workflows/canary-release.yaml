@@ -1,0 +1,65 @@
+name: "Canary release workflow"
+
+on:
+  push:
+    branches:
+    - "master"
+    - "dev/argocd"
+    paths:
+    - "charts/deploy-canary/"
+    - ".github/workflows/canary-release.yaml"
+  workflow_dispatch:
+
+env:
+  ARGOCD_APP_NAME: yolo-deploy-canary
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check-diff-values:
+    runs-on: ubuntu-latest
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref_name }}
+        fetch-depth: 2
+    - name: check canary image
+      run: |
+        IMAGE_CANARY=$(yq .image.canary charts/deploy-canary/values.yaml)
+        git checkout HEAD~1
+        IMAGE_CANARY_OLD=$(yq .image.canary charts/deploy-canary/values.yaml)
+        if [[ "${IMAGE_CANARY}"=="${IMAGE_CANARY_OLD}" ]]; then
+          echo "release=0" >> "$GITHUB_OUTPUT"
+        else
+          echo "release=1" >> "$GITHUB_OUTPUT"
+        fi
+
+#  sync-argocd-app:
+#    runs-on: ubuntu-latest #self-hosted
+#    steps:
+#    - name: Sync with master
+#      run: |
+#        argocd app sync "${{ env.ARGOCD_APP_NAME }}"
+#    - name: Wait for new release
+#      run: |
+#        kubectl wait --for condition=available deployment/yolo-deploy-canary-api-canary
+#        kubectl wait --for condition=available deployment/yolo-deploy-canary-api-stable
+
+  canary-release:
+    runs-on: ubuntu-latest #self-hosted
+    needs: [check-diff-values]
+    if: needs.check-diff-values.outputs.output1 == 1
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref_name }}
+
+    - name: Sync with master
+      run: |
+        
+
+    
