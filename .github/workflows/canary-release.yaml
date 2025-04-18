@@ -4,10 +4,8 @@ on:
   push:
     branches:
     - "master"
-    - "dev/argocd"
     paths:
     - "charts/deploy-canary/"
-    - ".github/workflows/canary-release.yaml"
   workflow_dispatch:
 
 env:
