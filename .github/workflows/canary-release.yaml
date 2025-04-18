@@ -5,7 +5,7 @@ on:
     branches:
     - "master"
     paths:
-    - "charts/deploy-canary/"
+    - "charts/deploy-canary/**"
   workflow_dispatch:
 
 env:
