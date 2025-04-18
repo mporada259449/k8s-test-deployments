@@ -20,6 +20,8 @@ defaults:
 jobs:
   check-diff-values:
     runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.check.outputs.release }}
     steps:
     - name: checkout repo
       uses: actions/checkout@v4
@@ -27,14 +29,15 @@ jobs:
         ref: ${{ github.ref_name }}
         fetch-depth: 2
     - name: check canary image
+      id: check
       run: |
         IMAGE_CANARY=$(yq .image.canary charts/deploy-canary/values.yaml)
         git checkout HEAD~1
         IMAGE_CANARY_OLD=$(yq .image.canary charts/deploy-canary/values.yaml)
         if [[ "${IMAGE_CANARY}"=="${IMAGE_CANARY_OLD}" ]]; then
-          echo "release=0" >> "$GITHUB_OUTPUT"
+          echo "release=false" >> "$GITHUB_OUTPUT"
         else
-          echo "release=1" >> "$GITHUB_OUTPUT"
+          echo "release=true" >> "$GITHUB_OUTPUT"
         fi
 
 #  sync-argocd-app:
@@ -51,15 +54,20 @@ jobs:
   canary-release:
     runs-on: ubuntu-latest #self-hosted
     needs: [check-diff-values]
-    if: needs.check-diff-values.outputs.output1 == 1
+    if: needs.check-diff-values.outputs.release == 'false'
     steps:
     - name: checkout repo
       uses: actions/checkout@v4
       with:
         ref: ${{ github.ref_name }}
+    
+    - name: test step
+      run: |
+        echo ${{ needs.check-diff-values.outputs.release }}
 
     - name: Sync with master
       run: |
+        echo "It will do something"
         
 
     
