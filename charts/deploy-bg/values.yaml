@@ -1,42 +1,33 @@
 #The name of the controller for GatewayClass object definition
 controllerNameGatewayClass: gateway.envoyproxy.io/gatewayclass-controller
-
 #Port on which Gateway Api listen to and also open port of services
 openPort: 5000
 openPortName: model-port-endpoint
-
 #weights values for canary deployment release
 weights:
   blue: 100
   green: 0
-
 #Deployments labels
-labelBlue: 
+labelBlue:
   app: yolo-blue
-labelGreen: 
+labelGreen:
   app: yolo-green
-
 #Replica values for deployments
 replicas:
   blue: 1
   green: 1
-
 #Container names
 containerNames:
   blue: yolo-v3
   green: yolo-v3
-
 #Images names
 image:
   blue: ghcr.io/mporada259449/yolo/yolo-v3:1.2
   green: ghcr.io/mporada259449/yolo/yolo-v3:1.2
-
 targetPort:
   blue: 5000
   green: 5000
-
 targetPortTest: 5001
-
 #limit resources for blue container
 limits:
   blue:
@@ -45,4 +36,3 @@ limits:
   green:
     cpu: '2'
     memory: '2G'
-

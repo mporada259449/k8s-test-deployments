@@ -1,0 +1,123 @@
+name: "Blue/green release workflow"
+
+on:
+  push:
+    branches:
+    - "master"
+    paths:
+    - "charts/deploy-bg/**"
+  workflow_dispatch:
+
+env:
+  ARGOCD_APP_NAME: yolo-deploy-bg
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  check-diff-values:
+    runs-on: ubuntu-latest
+    outputs:
+      release: ${{ steps.check.outputs.release }}
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref_name }}
+        fetch-depth: 2
+    - name: check images
+      id: check
+      run: |
+        IMAGE_BLUE=$(yq .image.blue charts/deploy-bg/values.yaml)
+        IMAGE_GREEN=$(yq .image.green charts/deploy-bg/values.yaml)
+        WEIGHT_BLUE=$(yq .weights.blue charts/deploy-bg/values.yaml)
+        WEIGHT_GREEN=$(yq .weights.green charts/deploy-bg/values.yaml)
+
+        git checkout HEAD~1
+
+        IMAGE_BLUE_OLD=$(yq .image.blue charts/deploy-bg/values.yaml)
+        IMAGE_GREEN_OLD=$(yq .image.green charts/deploy-bg/values.yaml)
+        if [[ "${IMAGE_BLUE}" != "${IMAGE_BLUE_OLD}" && "${WEIGHT_BLUE}"==0 ]]; then
+          echo "Image for blue deployment is changed"
+          echo "release=true" >> "$GITHUB_OUTPUT"
+        elif [[ "${IMAGE_GREEN}" != "${IMAGE_GREEN_OLD}" && "${WEIGHT_GREEN}"==0 ]]; then
+          echo "Image for green deployment is changed"
+          echo "release=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "No changes in image"
+          echo "release=false" >> "$GITHUB_OUTPUT"
+        fi       
+
+  sync-argocd-app:
+    runs-on: self-hosted
+    steps:
+    - name: Sync with master
+      run: |
+        argocd app sync "${{ env.ARGOCD_APP_NAME }}"
+    - name: Wait for new release
+      run: |
+        kubectl wait --for condition=available deployment/yolo-deploy-bg-api-blue
+        kubectl wait --for condition=available deployment/yolo-deploy-bg-api-green
+
+  blue-green-release:
+    runs-on: self-hosted
+    outputs:
+      status: ${{ steps.bg.outputs.status }}
+    needs: [check-diff-values, sync-argocd-app]
+    if: ${{ needs.check-diff-values.outputs.release == 'true'}} 
+    steps:
+    - name: checkout repo
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref_name }}
+
+    - name: Blue/green release script
+      id: bg
+      run: |
+        echo ${{ needs.check-diff-values.outputs.release }}
+        bash scripts/blue-green-release.sh
+        BG_STATUS=$?
+        echo "status=${BG_STATUS}" >> "$GITHUB_OUTPUT"
+
+  commit-new-weights:
+    runs-on: ubuntu-latest
+    needs: [blue-green-release]
+    if: ${{ needs.canary.outputs.status == '0' }} 
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.ref_name }}
+    - name: Commit new weights
+      run: |
+        git config --global user.name ${{ github.repository_owner }}
+        git config --global user.email 259449@student.pwr.edu.pl
+
+        WEIGHT_BLUE=$(yq .weights.blue charts/deploy-bg/values.yaml)
+
+        if [[ "${WEIGHT_BLUE}" -eq 0 ]]; then
+          yq -i '.weights.blue = 100' charts/deploy-bg/values.yaml
+          yq -i '.weights.green = 0' charts/deploy-bg/values.yaml
+        else
+          yq -i '.weights.blue = 0' charts/deploy-bg/values.yaml
+          yq -i '.weights.green = 100' charts/deploy-bg/values.yaml
+        fi
+
+        git add charts/deploy-bg/values.yaml
+        git commit -m "Update of weights for new version of image in blue green deployment"
+        git push https://${{ secrets.GITHUB_TOKEN }}@github.com//${{ github.repository }} ${{ github.ref_name}}
+
+  final-sync-delivery:
+    runs-on: self-hosted
+    needs: [commit-new-weights]
+    permissions:
+      contents: write
+    steps:
+    - name: Sync with master
+      run: |
+        argocd app sync "${{ env.ARGOCD_APP_NAME }}"
+    - name: Wait for new release
+      run: |
+        kubectl wait --for condition=available deployment/yolo-deploy-bg-api-blue
+        kubectl wait --for condition=available deployment/yolo-deploy-bg-api-green
