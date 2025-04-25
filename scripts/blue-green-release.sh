@@ -41,8 +41,8 @@ function check_weights(){
 
 ARGO_APP_NAME="yolo-deploy-bg"
 RETRY_NUMBER=5
-blue_current=$(grep -A2 weights: values.yaml | grep -oP "(?<=blue: )[0-9]{1,3}$")
-green_current=$(grep -A2 weights: values.yaml | grep -oP "(?<=green: )[0-9]{1,3}$")
+blue_current=$(grep -A2 weights: charts/deploy-bg/values.yaml | grep -oP "(?<=blue: )[0-9]{1,3}$")
+green_current=$(grep -A2 weights: charts/deploy-bg/values.yaml | grep -oP "(?<=green: )[0-9]{1,3}$")
 blue_help=$((blue_current-100))
 green_help=$((green_current-100))
 blue="${blue_help#-}"
