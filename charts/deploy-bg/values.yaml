@@ -5,8 +5,8 @@ openPort: 5000
 openPortName: model-port-endpoint
 #weights values for canary deployment release
 weights:
-  blue: 0
-  green: 100
+  blue: 100
+  green: 0
 #Deployments labels
 labelBlue:
   app: yolo-blue
@@ -22,7 +22,7 @@ containerNames:
   green: yolo-v3
 #Images names
 image:
-  blue: ghcr.io/mporada259449/yolo/yolo-v11:1.1
+  blue: ghcr.io/mporada259449/yolo/yolo-v3:1.2
   green: ghcr.io/mporada259449/yolo/yolo-v3:1.2
 targetPort:
   blue: 5000
