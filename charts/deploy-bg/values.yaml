@@ -23,7 +23,7 @@ containerNames:
 #Images names
 image:
   blue: ghcr.io/mporada259449/yolo/yolo-v3:1.2
-  green: ghcr.io/mporada259449/yolo/yolo-v3:1.2
+  green: ghcr.io/mporada259449/yolo/yolo-v11:1.1
 targetPort:
   blue: 5000
   green: 5000
