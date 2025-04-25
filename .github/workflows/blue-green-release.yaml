@@ -4,10 +4,8 @@ on:
   push:
     branches:
     - "master"
-    - "dev/bg-release"
     paths:
     - "charts/deploy-bg/**"
-    - ".github/workflows/blue-green-release.yaml"
   workflow_dispatch:
 
 env:
