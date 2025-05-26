@@ -1,5 +1,5 @@
 {
     "YOLO_FILE": "yolov3u",
     "YOLO_VERSION": "v3",
-    "CONTAINER_VERSION": "1.2"
+    "CONTAINER_VERSION": "1.3"
 }
