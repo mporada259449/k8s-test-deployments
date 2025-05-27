@@ -7,8 +7,8 @@ openPort: 5000
 openPortName: model-port-endpoint
 #weights values for canary deployment release
 weights:
-  blue: 100
-  green: 0
+  blue: 0
+  green: 100
 #Deployments labels
 labelBlue:
   app: yolo-blue
