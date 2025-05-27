@@ -50,7 +50,7 @@ green="${green_help#-}"
 
 echo "Weights will be changed to blue - ${blue}, green - ${green}"
 change_waights "${blue}" "${green}" "$ARGO_APP_NAME"
-sleep 5
+sleep 60
 retry=0
 while [ "$retry" -lt "${RETRY_NUMBER}" ]; do
     echo "Checking if application is synchoronised, Retry number ${retry}"
