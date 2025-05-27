@@ -30,8 +30,8 @@ containerNames:
 
 #Images names
 image:
-  stable: ghcr.io/mporada259449/yolo/yolo-v11:1.3
-  canary: ghcr.io/mporada259449/yolo/yolo-v11:1.3
+  stable: ghcr.io/mporada259449/yolo/yolo-v3:1.3
+  canary: ghcr.io/mporada259449/yolo/yolo-v3:1.3
 
 targetPort:
   stable: 5000
@@ -40,9 +40,9 @@ targetPort:
 #limit resources for blue container
 limits:
   stable:
-    cpu: '2.5'
-    memory: '4G'
+    cpu: '2'
+    memory: '2G'
   canary:
-    cpu: '2.5'
-    memory: '4G'
+    cpu: '2'
+    memory: '2G'
 
