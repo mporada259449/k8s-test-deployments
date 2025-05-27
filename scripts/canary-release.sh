@@ -48,7 +48,7 @@ canary_weights=(20 40 60 80)
 for i in "${!stable_weights[@]}"; do
     echo "Weights will be changed to stable = ${stable_weights[$i]}, canary = ${canary_weights[$i]}"
     change_waights "${stable_weights[$i]}" "${canary_weights[$i]}" "$ARGO_APP_NAME"
-    sleep 5
+    sleep 60
     retry=0
     while [ "$retry" -lt "${RETRY_NUMBER}" ]; do
         echo "Checking if application is synchoronised, Retry number ${retry}"
