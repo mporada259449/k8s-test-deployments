@@ -30,8 +30,8 @@ containerNames:
 
 #Images names
 image:
-  stable: ghcr.io/mporada259449/yolo/yolo-v3:1.2
-  canary: ghcr.io/mporada259449/yolo/yolo-v3:1.2
+  stable: ghcr.io/mporada259449/yolo/yolo-v11:1.1
+  canary: ghcr.io/mporada259449/yolo/yolo-v11:1.1
 
 targetPort:
   stable: 5000
