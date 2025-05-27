@@ -1,5 +1,7 @@
 #The name of the controller for GatewayClass object definition
-controllerNameGatewayClass: gateway.envoyproxy.io/gatewayclass-controller
+controllerNameGatewayClass: istio.io/gateway-controller
+gatewayName: gateway
+gatewayClassName: istio-class
 #Port on which Gateway Api listen to and also open port of services
 openPort: 5000
 openPortName: model-port-endpoint

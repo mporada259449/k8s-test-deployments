@@ -1,9 +1,9 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: Gateway
 metadata:
-  name: {{ .Release.Name }}-gateway
+  name: {{ .Values.gatewayName }}
 spec:
-  gatewayClassName: {{ .Release.Name }}-gateway-class
+  gatewayClassName: {{ .Values.gatewayClassName }}
   listeners:
   - protocol: HTTP
     port: {{ .Values.openPort }}
