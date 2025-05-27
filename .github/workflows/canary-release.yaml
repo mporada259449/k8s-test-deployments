@@ -32,9 +32,12 @@ jobs:
         IMAGE_CANARY=$(yq .image.canary charts/deploy-canary/values.yaml)
         git checkout HEAD~1
         IMAGE_CANARY_OLD=$(yq .image.canary charts/deploy-canary/values.yaml)
-        if [[ "${IMAGE_CANARY}"=="${IMAGE_CANARY_OLD}" ]]; then
+        echo "Values: " $IMAGE_CANARY_OLD $IMAGE_CANARY
+        if [ "$IMAGE_CANARY" = "$IMAGE_CANARY_OLD" ]; then
+          echo "Same release"
           echo "release=false" >> "$GITHUB_OUTPUT"
         else
+          echo "New release"
           echo "release=true" >> "$GITHUB_OUTPUT"
         fi
 

@@ -38,10 +38,10 @@ jobs:
 
         IMAGE_BLUE_OLD=$(yq .image.blue charts/deploy-bg/values.yaml)
         IMAGE_GREEN_OLD=$(yq .image.green charts/deploy-bg/values.yaml)
-        if [[ "${IMAGE_BLUE}" != "${IMAGE_BLUE_OLD}" && "${WEIGHT_BLUE}"==0 ]]; then
+        if [[ "${IMAGE_BLUE}" != "${IMAGE_BLUE_OLD}" && "${WEIGHT_BLUE}" = "0" ]]; then
           echo "Image for blue deployment is changed"
           echo "release=true" >> "$GITHUB_OUTPUT"
-        elif [[ "${IMAGE_GREEN}" != "${IMAGE_GREEN_OLD}" && "${WEIGHT_GREEN}"==0 ]]; then
+        elif [[ "${IMAGE_GREEN}" != "${IMAGE_GREEN_OLD}" && "${WEIGHT_GREEN}" = "0" ]]; then
           echo "Image for green deployment is changed"
           echo "release=true" >> "$GITHUB_OUTPUT"
         else
