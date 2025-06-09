@@ -40,9 +40,9 @@ targetPort:
 #limit resources for blue container
 limits:
   stable:
-    cpu: '2'
-    memory: '2G'
+    cpu: '2.5'
+    memory: '4G'
   canary:
-    cpu: '2'
-    memory: '2G'
+    cpu: '2.5'
+    memory: '4G'
 
