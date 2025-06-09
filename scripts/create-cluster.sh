@@ -36,5 +36,5 @@ ARGO_INIT_PASS=$(argocd admin initial-password | head -n 1)
 
 argocd login --username admin --password "${ARGO_INIT_PASS}" "$ARGO_DNS_ADDRESS"
 
-argocd account update-password --current-password "${ARGO_INIT_PASS}" --new-password "${ARGO_PASS}
+argocd account update-password --current-password "${ARGO_INIT_PASS}" --new-password "${ARGO_PASS}"
 kubectl config set-context --current --namespace=default
